@@ -58,7 +58,6 @@ cecho g "\t\t---- GIT UPDATER ----"
 if [ "$1" == "-a" ] || [ "$1" == "all" ]; then
   cecho p "\tALL GIT REPOS WILL BE UPDATED\n"
   for d in */ ; do
-    echo "X"
     update $d;
   done
   finish
