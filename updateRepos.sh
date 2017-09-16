@@ -17,6 +17,8 @@ cecho() {
   echo -e "$text"
 }
 
+updatedRepos[]
+
 update(){
   dir=$1;
   cd $dir ;
@@ -40,7 +42,7 @@ update(){
     cecho b "<<<<<<<<<<<<<<< UPDATED => $dir "
     cecho b "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"
   else
-    cecho y "#### $PWD does not contains a git repositori"
+    cecho y "#### $PWD does not contains a git repository"
   fi
   cd .. ;
 }
@@ -52,7 +54,6 @@ finish(){
   cecho g "\nSEE YOU LATER BRO..."
 }
 
-gitName=".git";
 clear
 cecho g "\t\t---- GIT UPDATER ----"
 if [ "$1" == "-a" ] || [ "$1" == "all" ]; then
@@ -63,16 +64,25 @@ if [ "$1" == "-a" ] || [ "$1" == "all" ]; then
   finish
 elif [ "$1" == "-e" ] || [ "$1" == "each" ]; then
   for d in */ ; do
-    cecho y "Do you want to update => $d  (yes/no)"
-    read -p ">>> " res
-    while [ "$res" != "yes" ] && [ "$res" != "no" ]; do
-      cecho r "please write 'yes' or 'no'"
+    cd $d
+    isGit="0"
+    if [ -d .git ]; then
+      isGit="1"
+    fi
+    cd ..
+    echo $isGit
+    if [ "$isGit" == "1" ]; then
+      cecho y "Do you want to update => $d  (yes/no)"
       read -p ">>> " res
-    done
-    if [ "$res" == "yes" ]; then
-      update $d;
-    else
-      cecho y "$d Was not updated"
+      while [ "$res" != "yes" ] && [ "$res" != "no" ]; do
+        cecho r "please write 'yes' or 'no'"
+        read -p ">>> " res
+      done
+      if [ "$res" == "yes" ]; then
+        update $d;
+      else
+      cecho r "$d Was NOT updated"
+      fi
     fi
   done
   finish
