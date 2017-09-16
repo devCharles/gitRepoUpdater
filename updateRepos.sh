@@ -69,7 +69,7 @@ elif [ "$1" == "-e" ] || [ "$1" == "each" ]; then
       cecho r "please write 'yes' or 'no'"
       read -p ">>> " res
     done
-    if [ "$res" == "$yes" ]; then
+    if [ "$res" == "yes" ]; then
       update $d;
     else
       cecho y "$d Was not updated"
