@@ -17,13 +17,30 @@ cecho() {
   echo -e "$text"
 }
 
-updatedRepos[]
+declare -a updatedRepos=()
+
+addUpdatedRepo(){
+  cecho r "add $1"
+
+  updatedRepos=("${updatedRepos[@]}" "$1")
+
+  echo "end ${updatedRepos[@]}"
+}
+
+printUpdatedRepos(){
+  cecho p "Updated repositories:"
+  cecho p "------------------------------------------"
+  for repo in "${updatedRepos[@]}";
+  do
+    cecho p "> ${repo}"
+  done
+  cecho p "------------------------------------------"
+}
 
 update(){
   dir=$1;
   cd $dir ;
   if [ -d .git ]; then
-    cecho b ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     cecho b ">>>>>>>>>>>>>>> UPDATING => $dir ";
     cecho c "$(git fetch)";
     git rev-parse --verify develop
@@ -39,7 +56,7 @@ update(){
       fi
     fi
     cecho c "$(git pull)";
-    cecho b "<<<<<<<<<<<<<<< UPDATED => $dir "
+    addUpdatedRepo ${dir}
     cecho b "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"
   else
     cecho y "#### $PWD does not contains a git repository"
@@ -48,6 +65,7 @@ update(){
 }
 
 finish(){
+  printUpdatedRepos ${updatedRepos}
   cecho g "########################################";
   cecho g "············ FINISHED ··················";
   cecho g "########################################";
