@@ -20,44 +20,49 @@ cecho() {
 declare -a updatedRepos=()
 
 addUpdatedRepo(){
-  cecho r "add $1"
-
   updatedRepos=("${updatedRepos[@]}" "$1")
-
-  echo "end ${updatedRepos[@]}"
 }
 
 printUpdatedRepos(){
-  cecho p "Updated repositories:"
-  cecho p "------------------------------------------"
-  for repo in "${updatedRepos[@]}";
-  do
-    cecho p "> ${repo}"
-  done
-  cecho p "------------------------------------------"
+  if [ ${#updatedRepos[@]} -gt 0 ]; then
+    cecho p "# ${#updatedRepos[@]} Updated repositories:"
+    cecho p "# --------------------------------------"
+    for repo in "${updatedRepos[@]}";
+    do
+      cecho p "# > ${repo}"
+    done
+    cecho p "# --------------------------------------"
+  else
+    cecho r "#  ------------------"
+    cecho r "# | NOTHING UPDATED! |"
+    cecho r "#  ------------------"
+  fi
+
+
 }
 
 update(){
+  clear
   dir=$1;
   cd $dir ;
   if [ -d .git ]; then
-    cecho b ">>>>>>>>>>>>>>> UPDATING => $dir ";
+    cecho b "# UPDATING => $dir ";
     cecho c "$(git fetch)";
     git rev-parse --verify develop
     if [ "$?" == "0" ]; then
       cecho c "$(git checkout 'develop')";
-      cecho c "branch develop will be updated"
+      cecho c "# Branch develop will be updated"
     else
       git rev-parse --verify develop
       # git rev-parse --verify master
       if [ "$?" == "0" ]; then
         cecho c "$(git checkout 'master')";
-        cecho c "branch master will be updated"
+        cecho c "# Branch master will be updated"
       fi
     fi
     cecho c "$(git pull)";
     addUpdatedRepo ${dir}
-    cecho b "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"
+    cecho b "\n"
   else
     cecho y "#### $PWD does not contains a git repository"
   fi
@@ -65,9 +70,10 @@ update(){
 }
 
 finish(){
-  printUpdatedRepos ${updatedRepos}
+  clear
   cecho g "########################################";
-  cecho g "············ FINISHED ··················";
+  cecho g "# DONE! ";
+  printUpdatedRepos ${updatedRepos}
   cecho g "########################################";
   cecho g "\nSEE YOU LATER BRO..."
 }
@@ -88,7 +94,6 @@ elif [ "$1" == "-e" ] || [ "$1" == "each" ]; then
       isGit="1"
     fi
     cd ..
-    echo $isGit
     if [ "$isGit" == "1" ]; then
       cecho y "Do you want to update => $d  (yes/no)"
       read -p ">>> " res
