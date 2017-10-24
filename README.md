@@ -1,5 +1,5 @@
 # gitRepoUpdater
-## This shell script update all the git repositories that you have in a folder
+## This shell script updates all of the git repositories that you have in a folder
 ### Instructions
 
 To update all git repos in a folder you can use:
@@ -26,22 +26,22 @@ $ ./updateRepos.sh
 ```
 ---
 ### Installing to use globally
-Toinstall the script and use it anywhere in your system yo havr to clone this repository
+To install this script and use it anywhere in your system you may clone this repository
 ```git
 git clone https://github.com/devCharles/gitRepoUpdater.git
 ```
-then cd to the repo
+then cd into the new directory
 ```sh
 $ cd gitRepoUpdater
 ```
-now we have to copy the 'updateRepos.sh' script to ```/usr/local/bin```
+now we must copy the 'updateRepos.sh' script to ```/usr/local/bin```
 ```sh
 $ sudo cp updateRepos.sh /usr/local/bin
 ```
-so now you can use the script by simply using
+and you can use the script by simply using
 ```sh
 $ updateRepos.sh [flag]
 ```
 
 ### Notes
-- in order to use the updater script you may have the right permission to execute the script
+- in order to use this script you may need to have the right permission level to execute the script
