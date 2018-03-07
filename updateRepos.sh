@@ -38,6 +38,29 @@ printUpdatedRepos(){
     cecho r "#  ------------------"
   fi
 
+}
+
+declare -a failedRepos=()
+
+addFailedRepo(){
+  failedRepos=("${failedRepos[@]}" "$1")
+}
+
+printFailedRepos(){
+  if [ ${#failedRepos[@]} -gt 0 ]; then
+    cecho r "# ${#failedRepos[@]} Failed repositories:"
+    cecho r "# --------------------------------------"
+    for repo in "${failedRepos[@]}";
+    do
+      cecho r "# > ${repo}"
+    done
+    cecho r "# --------------------------------------"
+  else
+    cecho g "#  ------------------"
+    cecho g "# | NOTHING FAILED! |"
+    cecho g "#  ------------------"
+  fi
+
 
 }
 
@@ -60,7 +83,10 @@ update(){
         cecho c "# Branch master will be updated"
       fi
     fi
-    cecho c "$(git pull)";
+    output=$(git pull)
+    status=$?
+    cecho c $output;
+    if [[ $status != 0 ]]; then cecho r "${dir} failed :("; addFailedRepo ${dir}; fi
     addUpdatedRepo ${dir}
     cecho b "\n"
   else
@@ -74,6 +100,7 @@ finish(){
   cecho g "########################################";
   cecho g "# DONE! ";
   printUpdatedRepos ${updatedRepos}
+  printFailedRepos  ${failedRepos}
   cecho g "########################################";
   cecho g "\nSEE YOU LATER BRO..."
 }
