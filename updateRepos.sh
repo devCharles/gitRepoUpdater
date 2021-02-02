@@ -86,27 +86,26 @@ printSkippedDirs(){
 update(){
   clear
   dir=$1;
-  cd $dir ;
+
+  if [ -d $dir ]; then
+    cd $dir
+  else
+    return
+  fi
+
   if [ -d .git ]; then
     cecho b "# UPDATING => $dir ";
     cecho c "$(git fetch)";
-    git rev-parse --verify develop
+    mainBranchName=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
     if [ "$?" == "0" ]; then
-      cecho c "$(git checkout 'develop')";
-      cecho c "# Branch develop will be updated"
-    else
-      git rev-parse --verify develop
-      # git rev-parse --verify master
-      if [ "$?" == "0" ]; then
-        cecho c "$(git checkout 'master')";
-        cecho c "# Branch master will be updated"
-      fi
+      cecho c "$(git checkout $mainBranchName)";
+      cecho c "# Branch $mainBranchName will be updated"
     fi
     output=$(git pull)
     status=$?
     cecho c $output;
     if [[ $status != 0 ]]; then cecho r "${dir} failed :("; addFailedRepo ${dir}; fi
-    addUpdatedRepo ${dir}
+    addUpdatedRepo "${dir} ($mainBranchName)"
     cecho b "\n"
   else
     cecho y "#### $PWD does not contains a git repository"
@@ -130,7 +129,7 @@ clear
 cecho g "\t\t---- GIT UPDATER ----"
 if [ "$1" == "-a" ] || [ "$1" == "all" ]; then
   cecho p "\tALL GIT REPOS WILL BE UPDATED\n"
-  for d in */ ; do
+  for d in * ; do
     update $d;
   done
   finish
