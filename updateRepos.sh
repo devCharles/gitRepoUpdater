@@ -64,6 +64,25 @@ printFailedRepos(){
 
 }
 
+declare -a skippedDirs=()
+
+addSkippedDir(){
+  skippedDirs=("${skippedDirs[@]}" "$1")
+}
+
+printSkippedDirs(){
+  if [ ${#skippedDirs[@]} -gt 0 ]; then
+    cecho b "# ${#skippedDirs[@]} directories skipped:"
+    cecho b "# --------------------------------------"
+    for directory in "${skippedDirs[@]}";
+    do
+      cecho b "# > ${directory}"
+    done
+    cecho b "# --------------------------------------"
+  fi
+
+}
+
 update(){
   clear
   dir=$1;
@@ -91,6 +110,7 @@ update(){
     cecho b "\n"
   else
     cecho y "#### $PWD does not contains a git repository"
+    addSkippedDir ${dir}
   fi
   cd .. ;
 }
@@ -100,6 +120,7 @@ finish(){
   cecho g "########################################";
   cecho g "# DONE! ";
   printUpdatedRepos ${updatedRepos}
+  printSkippedDirs  ${skippedDirs}
   printFailedRepos  ${failedRepos}
   cecho g "########################################";
   cecho g "\nSEE YOU LATER BRO..."
